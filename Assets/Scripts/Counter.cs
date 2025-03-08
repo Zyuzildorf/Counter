@@ -7,13 +7,15 @@ public class Counter : MonoBehaviour
     [SerializeField] private float _smoothIncreaseDuration = 0.5f;
 
     private bool _isCounting = false;
+    private WaitForSeconds _waitForSeconds;
 
     public event Action<int> CounterValueChanged; 
-    public int _counterValue { get; private set; }
+    public int CounterValue { get; private set; }
 
-    private void Start()
+    private void Awake()
     {
-        _counterValue = 0;
+        CounterValue = 0;
+        _waitForSeconds = new WaitForSeconds(_smoothIncreaseDuration);
     }
 
     private void Update()
@@ -24,7 +26,7 @@ public class Counter : MonoBehaviour
         }
     }
 
-    public void ToggleCounter()
+    private void ToggleCounter()
     {
         if (_isCounting == false)
         {
@@ -42,13 +44,11 @@ public class Counter : MonoBehaviour
 
     private IEnumerator IncreaseCounterValue()
     {
-        WaitForSeconds waitForSeconds = new WaitForSeconds(_smoothIncreaseDuration);
-
         while (_isCounting)
         {
-            yield return waitForSeconds;
-            _counterValue++;
-            CounterValueChanged?.Invoke(_counterValue);
+            yield return _waitForSeconds;
+            CounterValue++;
+            CounterValueChanged?.Invoke(CounterValue);
         }
     }
 }
